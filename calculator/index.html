@@ -329,7 +329,7 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
       <div class="card">
         <div class="card-head">
           <h3 id="bd-title">Where each order's money goes</h3>
-          <span class="sub">per average order</span>
+          <span class="sub" id="bd-sub"></span>
         </div>
         <div class="bar" id="bar"></div>
         <div class="split" id="split"></div>
@@ -359,6 +359,10 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
         <div class="row">
           <label for="newCust">New customers<small>People buying for the first time</small></label>
           <div class="field"><input id="newCust" type="number" inputmode="decimal" step="any" min="0" placeholder="0"></div>
+        </div>
+        <div class="row">
+          <label for="retRate">Returning customer rate<small>Shopify → Analytics. Share of customers who had bought before</small></label>
+          <div class="field"><input id="retRate" type="number" inputmode="decimal" step="any" min="0" max="100" placeholder="0"><span class="ad after">%</span></div>
         </div>
       </fieldset>
 
@@ -428,9 +432,9 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
           <p class="t-def">After product, delivery, fees and all ad spend. Before overheads such as staff and rent.</p>
         </div>
         <div class="tile">
-          <p class="t-label">Returning customer rate</p>
+          <p class="t-label">Sales from returning customers</p>
           <p class="t-num" id="s-ret">—</p>
-          <p class="t-def" id="s-retDef">Share of orders from people who had bought before.</p>
+          <p class="t-def" id="s-retDef">Customers won earlier coming back to buy again.</p>
         </div>
       </div>
 
@@ -486,7 +490,8 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
       <p><code>Break-even ROAS = AOV ÷ contribution</code> and <code>Target ROAS = AOV ÷ (contribution − target margin × revenue you keep)</code></p>
       <p><code>Store ROAS = total sales ÷ total ad spend</code>. Also called MER or blended ROAS. Because every order carries the same contribution, it is judged against the same break-even and target ROAS as part one.</p>
       <p><code>Cost per new customer = total ad spend ÷ new customers</code>. It is usually higher than break-even CPA, because it loads all ad spend onto first-time buyers only. Returning orders are how that cost is earned back.</p>
-      <p><code>Returning customer rate = (orders − new customers) ÷ orders</code>, with returning sales estimated at the same average order value.</p>
+      <p><code>Cost to acquire a purchase = total ad spend ÷ orders</code>, taken from last month in part two, so it counts every order the store took rather than only those Ads Manager tracked.</p>
+      <p><code>Sales from returning customers = total sales × returning customer rate</code>. An estimate, since returning customers can order more or less than new ones.</p>
       <p><code>Profit after ads = total sales × (contribution ÷ AOV) − total ad spend</code>. If your total sales figure already has refunds taken off, this slightly understates profit.</p>
       <p>Sales not credited to any source are the gap between total sales and what Meta, Google and organic channels each claim. Ads drive part of that gap, through brand searches, direct visits and word of mouth, and part would have happened anyway. When ad platforms claim more than you sold, they are counting the same order more than once.</p>
       <p>Sales Meta likely helped win are an estimate, not tracked results. Someone who saw an ad and later searched the brand on Google, typed the web address, or clicked an email had Meta as one touchpoint along the way. The presets give Meta this share of each group: Cautious 10% of Google Ads sales, 5% of organic and 20% of uncredited sales; Balanced 20%, 10% and 35%; Generous 30%, 20% and 50%. Some of these buyers never saw an ad at all, which is why no preset gives Meta everything. A holdout or conversion lift test measures this properly.</p>
@@ -512,12 +517,12 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
 (function(){
   const $ = id => document.getElementById(id);
   const IDS = ['aov','tax','product','shipping','packfulfil','feePct','returns','margin',
-    'sales','orders','newCust','metaSpend','googleSpend','metaRev','googleRev','organicRev','prevSales','prevNew','prevSpend'];
+    'sales','orders','newCust','retRate','metaSpend','googleSpend','metaRev','googleRev','organicRev','prevSales','prevNew','prevSpend'];
   const EXAMPLE = {aov:48, tax:20, product:13.3, shipping:3.95, packfulfil:2.7, feePct:2.2, returns:4, margin:15,
-    sales:52000, orders:1083, newCust:700, metaSpend:15000, googleSpend:'', metaRev:34500, googleRev:'', organicRev:7400,
+    sales:52000, orders:1083, newCust:700, retRate:35, metaSpend:15000, googleSpend:'', metaRev:34500, googleRev:'', organicRev:7400,
     prevSales:24800, prevNew:300, prevSpend:4500, hasGoogle:false};
   const BLANK = {aov:'', tax:'', product:'', shipping:'', packfulfil:'', feePct:'', returns:'', margin:15,
-    sales:'', orders:'', newCust:'', metaSpend:'', googleSpend:'', metaRev:'', googleRev:'', organicRev:'', prevSales:'', prevNew:'', prevSpend:'', hasGoogle:false};
+    sales:'', orders:'', newCust:'', retRate:'', metaSpend:'', googleSpend:'', metaRev:'', googleRev:'', organicRev:'', prevSales:'', prevNew:'', prevSpend:'', hasGoogle:false};
   const PRESETS = {
     cautious: {google: .10, organic: .05, none: .20},
     balanced: {google: .20, organic: .10, none: .35},
@@ -567,9 +572,9 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
     const valid = sales > 0 && spend > 0;
     const roas = valid ? sales / spend : null;
     const ncac = spend > 0 && newCust > 0 ? spend / newCust : null;
-    const retOrders = orders > 0 ? Math.max(0, orders - newCust) : null;
-    const retRate = orders > 0 ? retOrders / orders : null;
-    const retSales = ok(retRate) ? sales * retRate : null;
+    const retRate = $('retRate').value !== '' ? Math.min(n('retRate'), 100) / 100 : null;
+    const retSales = ok(retRate) && sales > 0 ? sales * retRate : null;
+    const cpa = spend > 0 && orders > 0 ? spend / orders : null;
     const profit = valid && m.valid ? sales * (m.cm / m.aov) - spend : null;
     const metaRoas = metaSpend > 0 && metaRev > 0 ? metaRev / metaSpend : null;
     const googleRoas = googleSpend > 0 && googleRev > 0 ? googleRev / googleSpend : null;
@@ -587,7 +592,7 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
     const assistRoas = p => { const r = PRESETS[p]; return metaSpend > 0 && metaRev > 0 ? (metaRev + googleRev * r.google + organicRev * r.organic + noneRev * r.none) / metaSpend : null; };
     return {hasGoogle, rates, noneRev, assistGoogle, assistOrganic, assistNone, assisted, assistRoas,
       sales, orders, newCust, metaSpend, googleSpend, spend, metaRev, googleRev, organicRev, valid, roas, ncac,
-      retOrders, retRate, retSales, profit, metaRoas, googleRoas, claimed, uncredited, state, hasPrev, prevSales, prevNew, prevSpend};
+      cpa, retRate, retSales, profit, metaRoas, googleRoas, claimed, uncredited, state, hasPrev, prevSales, prevNew, prevSpend};
   }
 
   function bigX(el, v){ el.classList.remove('na'); el.innerHTML = ok(v) ? v.toFixed(2) + '<span class="u">×</span>' : '—'; }
@@ -597,7 +602,6 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
     const s = Math.abs(v).toLocaleString('en-GB', {minimumFractionDigits: dp, maximumFractionDigits: dp});
     el.innerHTML = (v < 0 ? '−' : '') + '<span class="c">' + cur() + '</span>' + s;
   }
-  function bigPct(el, v){ el.classList.remove('na'); el.innerHTML = ok(v) ? (v * 100).toFixed(0) + '<span class="u">%</span>' : '—'; }
   function na(el, text){ el.classList.add('na'); el.textContent = text; }
 
   function render(){
@@ -609,7 +613,7 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
     $('h-res').textContent = hu > 0 && hc > 0
       ? hu + ' × ' + money(hc) + ' = ' + money(hu * hc) + ' per order, added above.'
       : 'Fill both to set product cost per order.';
-    renderTargets(m); renderBreakdown(m); renderMonth(m, mo); renderCredit(m, mo); renderAssist(m, mo); renderChart(m, mo); renderBefore(m, mo);
+    renderTargets(m); renderBreakdown(m, mo); renderMonth(m, mo); renderCredit(m, mo); renderAssist(m, mo); renderChart(m, mo); renderBefore(m, mo);
     $('d-be').textContent = xs(m.beRoas); $('d-t').textContent = xs(m.tRoas); $('d-s').textContent = xs(mo.roas);
   }
 
@@ -639,23 +643,33 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
       '" style="flex:0 0 calc(' + (c[1] / total * 100) + '% - 2px);' + (pattern ? '' : 'background:' + c[2]) + '"></div>';
   }).join('');
 
-  function renderBreakdown(m){
+  function renderBreakdown(m, mo){
     const bar = $('bar'), split = $('split');
-    if (!m.valid) { bar.innerHTML = ''; split.innerHTML = '<p class="empty">Enter an order value and costs to see the breakdown.</p>'; $('bd-title').textContent = "Where each order's money goes"; return; }
+    if (!m.valid) { bar.innerHTML = ''; split.innerHTML = '<p class="empty">Enter an order value and costs to see the breakdown.</p>'; $('bd-title').textContent = "Where each order's money goes"; $('bd-sub').textContent = ''; return; }
     $('bd-title').textContent = 'Where every ' + money(m.aov) + ' order goes';
-    const contrib = Math.max(0, m.cm);
     const costs = [
       ['Tax', m.taxAmt, 'hatch'], ['Refunds', m.refunds, '#3A4741'], ['Product', m.product, '#5A6A61'],
       ['Shipping', m.shipping, '#7C8D83'], ['Packaging and handling', m.packfulfil, '#9FAAA1'], ['Card processing', m.fees, '#C7CEC4'],
     ];
-    const keep = m.tCpa
-      ? [['Ad budget at target CPA', m.tCpa, 'var(--green)'], ['Target profit', contrib - m.tCpa, 'var(--mint)']]
-      : [['Left before ads', contrib, 'var(--green)']];
-    const total = Math.max(m.aov, costs.reduce((s, c) => s + c[1], 0) + contrib);
+    const costSum = costs.reduce((s, c) => s + c[1], 0);
+    const cpa = mo.cpa;
+    let keep, right = '', total;
+    if (ok(cpa)) {
+      const pl = m.cm - cpa;
+      $('bd-sub').textContent = "with last month's ad cost from part 2";
+      keep = [['Cost to acquire a purchase', cpa, 'var(--amber)'], ['Profit per order', Math.max(0, pl), 'var(--green)']];
+      total = Math.max(m.aov, costSum + cpa);
+      right += li('Cost to acquire a purchase', money(cpa), pct(cpa / m.aov, 0), 'var(--amber)', true);
+      right += pl >= 0
+        ? li('Profit per order', '<span class="pos-v">' + money(pl) + '</span>', pct(pl / m.aov, 0), 'var(--green)', true)
+        : li('Loss per order', '<span class="neg-v">' + money(pl) + '</span>', pct(pl / m.aov, 0), 'var(--red)', true);
+    } else {
+      $('bd-sub').textContent = 'add ad spend and orders in part 2 to see profit';
+      keep = [['Left to pay for ads and profit', Math.max(0, m.cm), 'var(--green)']];
+      total = Math.max(m.aov, costSum + Math.max(0, m.cm));
+      right += li('Left to pay for ads and profit', money(m.cm), pct(m.cm / m.aov, 0), 'var(--green)', true);
+    }
     bar.innerHTML = segs(costs, total, m.aov) + segs(keep, total, m.aov);
-    let right = keep.map(c => li(c[0], money(c[1]), pct(c[1] / m.aov, 0), c[2], true)).join('');
-    if (m.cm < 0) right += li('Loss before ads', '<span class="neg-v">' + money(m.cm) + '</span>', '', 'var(--red)', true);
-    right += li('Contribution margin', money(m.cm), pct(m.cm / m.netRev, 0), 'transparent');
     split.innerHTML = '<ul>' + costs.filter(c => c[1] > 0).map(c => li(c[0], money(c[1]), pct(c[1] / m.aov, 0), c[2])).join('') + '</ul><ul>' + right + '</ul>';
   }
 
@@ -676,10 +690,10 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
     $('s-ncacDef').textContent = nd;
 
     bigMoney($('s-profit'), mo.profit, 0);
-    bigPct($('s-ret'), mo.retRate);
+    bigMoney($('s-ret'), mo.retSales, 0);
     $('s-retDef').textContent = ok(mo.retSales)
-      ? 'About ' + money(mo.retSales, 0) + ' of sales came from people who had bought before.'
-      : 'Share of orders from people who had bought before.';
+      ? 'At a ' + pct(mo.retRate, 0) + ' returning customer rate. Customers won earlier coming back to buy again.'
+      : 'Add your returning customer rate to see this.';
 
     const el = $('status'), pill = $('status-pill'), txt = $('status-text');
     if (!mo.valid) { el.dataset.state = 'idle'; pill.textContent = 'Waiting'; txt.textContent = "Add last month's total sales and ad spend to see the whole picture."; return; }
@@ -849,7 +863,8 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
       L.push('Store ROAS: ' + xs(mo.roas) + (mo.metaRoas ? ' (Meta Ads Manager reports ' + xs(mo.metaRoas) + ')' : ''));
       if (mo.metaRoas) L.push('Meta ROAS including sales it likely helped win: ' + xs(mo.assistRoas(preset)) + ' (' + preset + ' estimate, range ' + xs(mo.assistRoas('cautious')) + ' to ' + xs(mo.assistRoas('generous')) + ')');
       if (ok(mo.ncac)) L.push('Cost per new customer: ' + money(mo.ncac) + ' across ' + count(mo.newCust) + ' new customers');
-      if (ok(mo.retRate)) L.push('Returning customer rate: ' + pct(mo.retRate, 0));
+      if (ok(mo.cpa)) L.push('Cost to acquire a purchase: ' + money(mo.cpa) + (m.valid ? ', leaving ' + money(m.cm - mo.cpa) + ' profit per order' : ''));
+      if (ok(mo.retSales)) L.push('Sales from returning customers: ' + money(mo.retSales, 0) + ' (' + pct(mo.retRate, 0) + ' returning customer rate)');
       if (ok(mo.profit)) L.push('Profit after ads, before overheads: ' + money(mo.profit, 0));
       if (mo.claimed > 0 && mo.uncredited > 0) L.push('Sales not credited to any source: ' + money(mo.uncredited, 0) + ' (' + pct(mo.uncredited / mo.sales, 0) + ')');
       if (mo.hasPrev) L.push('Against the earlier month: sales ' + signed(mo.sales - mo.prevSales) + ', new customers ' + (mo.newCust - mo.prevNew >= 0 ? '+' : '−') + count(Math.abs(mo.newCust - mo.prevNew)));
