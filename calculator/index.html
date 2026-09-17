@@ -853,6 +853,36 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
   function summary(){
     const m = compute(), mo = month(m);
     const L = ['Ad performance summary, prepared by Uscale', ''];
+    const raw = id => $(id).value.trim();
+    const inMoney = id => raw(id) === '' ? 'not entered' : money(parseFloat(raw(id)), 2);
+    const inPct = id => raw(id) === '' ? 'not entered' : raw(id) + '%';
+    const inNum = id => raw(id) === '' ? 'not entered' : raw(id);
+    L.push('WHAT WAS ENTERED', 'Currency: ' + cur(), '',
+      'Part 1, a typical order',
+      'Average order value: ' + inMoney('aov'),
+      'Tax already in that price: ' + inPct('tax'),
+      'Product cost per order: ' + inMoney('product'),
+      'Shipping per order: ' + inMoney('shipping'),
+      'Packaging and handling per order: ' + inMoney('packfulfil'),
+      'Card processing fee: ' + inPct('feePct'),
+      'Refunds: ' + inPct('returns'),
+      'Target net margin: ' + inPct('margin'),
+      '', 'Part 2, last month',
+      'Total sales: ' + inMoney('sales'),
+      'Orders: ' + inNum('orders'),
+      'New customers: ' + inNum('newCust'),
+      'Returning customer rate: ' + inPct('retRate'),
+      'Meta ad spend: ' + inMoney('metaSpend'),
+      'Runs Google ads: ' + ($('hasGoogle').checked ? 'yes' : 'no'));
+    if ($('hasGoogle').checked) L.push('Google ad spend: ' + inMoney('googleSpend'));
+    L.push('Sales Meta reports: ' + inMoney('metaRev'));
+    if ($('hasGoogle').checked) L.push('Sales Google Ads reports: ' + inMoney('googleRev'));
+    L.push('Organic sales: ' + inMoney('organicRev'),
+      '', 'A month before these ads',
+      'Total sales: ' + inMoney('prevSales'),
+      'New customers: ' + inNum('prevNew'),
+      'Total ad spend: ' + inMoney('prevSpend'),
+      '', 'RESULTS');
     if (m.valid) {
       L.push('Break-even ROAS: ' + xs(m.beRoas) + '   Break-even CPA: ' + money(m.beCpa));
       L.push('Target ROAS at ' + pct(m.margin, 0) + ' margin: ' + (m.tRoas ? xs(m.tRoas) : 'not reachable') + '   Target CPA: ' + (m.tCpa ? money(m.tCpa) : 'not reachable'));
@@ -869,7 +899,7 @@ footer a{color:var(--bone);text-decoration:none;border-bottom:1px solid var(--ha
       if (mo.claimed > 0 && mo.uncredited > 0) L.push('Sales not credited to any source: ' + money(mo.uncredited, 0) + ' (' + pct(mo.uncredited / mo.sales, 0) + ')');
       if (mo.hasPrev) L.push('Against the earlier month: sales ' + signed(mo.sales - mo.prevSales) + ', new customers ' + (mo.newCust - mo.prevNew >= 0 ? '+' : '−') + count(Math.abs(mo.newCust - mo.prevNew)));
     }
-    return L.length > 2 ? L.join('\n') : '';
+    return m.valid || mo.valid ? L.join('\n') : '';
   }
 
   function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove('on'), 1800); }
