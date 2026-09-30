@@ -270,10 +270,14 @@ footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-betwe
 @media (prefers-reduced-motion: reduce) { .btn, .opt-box, .chip-btn, .gallery figcaption { transition: none; } }
 
 /* Booking pop-up */
-.book { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--hair-strong); border-radius: 2px; background: var(--panel); color: var(--bone); overflow: auto; }
-.book::backdrop { background: rgba(4, 8, 6, 0.72); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.bk-modal { --panel-2: #122019; --green-bg: rgba(44, 195, 123, 0.12); --green-ink: #07130C; --error: #F08C77; --error-line: #E36A52; margin: auto; width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--hair-strong); border-radius: 2px; background: var(--panel); color: var(--bone); overflow: auto; }
+.bk-modal::backdrop { background: rgba(4, 8, 6, 0.72); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 .book-in { position: relative; padding: 32px; display: grid; gap: 16px; }
-.book h2 { font-size: 1.9rem; padding-right: 36px; }
+.bk-modal h2 { font-size: 1.9rem; line-height: 1.1; padding-right: 36px; }
+.bk-modal [hidden] { display: none !important; }
+.bk-modal .muted { color: var(--sage); }
+.book-pkg-none { font-size: 0.93rem; color: var(--sage); }
+.book-pkg-none a { color: var(--green); text-underline-offset: 3px; }
 .book-x { position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; display: grid; place-items: center; background: transparent; border: 1px solid var(--hair-strong); border-radius: 2px; color: var(--bone); font-size: 1.4rem; line-height: 1; cursor: pointer; }
 .book-x:hover { border-color: var(--green); color: var(--green); }
 .book-x:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
@@ -722,7 +726,7 @@ footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-betwe
   </div>
 </footer>
 
-<dialog class="book" id="book" aria-labelledby="book-title">
+<dialog class="bk-modal" id="booking-dialog" aria-labelledby="book-title">
   <div class="book-in">
     <button type="button" class="book-x" id="book-close" aria-label="Close"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <h2 id="book-title">Book a 30-minute discovery call</h2>
@@ -732,6 +736,7 @@ footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-betwe
       <div class="book-pkg-head"><span>Your package</span><a href="#builder" id="book-edit">Change it</a></div>
       <ul id="book-pkg-lines"></ul>
       <p class="book-pkg-total"><span>Monthly total</span><b id="book-pkg-total">£2,000</b></p>
+      <p class="book-pkg-none" id="book-pkg-none" hidden>No package chosen yet. <a href="/packages/#builder">Build one</a>, or book the call and we'll work it out together.</p>
     </div>
 
     <form id="book-form" novalidate>
@@ -876,7 +881,7 @@ footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-betwe
   // Paste the Google Apps Script web app URL here after deploying booking-backend/Code.gs.
   var BOOKING_URL = '__BOOKING_URL__';
 
-  var dialog = document.getElementById('book');
+  var dialog = document.getElementById('booking-dialog');
   if (!dialog || typeof dialog.showModal !== 'function') return; // very old browsers: the link opens this page
 
   var form = document.getElementById('book-form');
@@ -916,8 +921,17 @@ footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-betwe
     return { lines: lines, total: total };
   }
 
+  var hasBuilder = !!document.getElementById('builder-form');
+
   function renderPackage() {
     var pkg = currentPackage();
+    if (!hasBuilder) {
+      document.getElementById('book-pkg-lines').hidden = true;
+      document.querySelector('.book-pkg-total').hidden = true;
+      document.getElementById('book-edit').hidden = true;
+      document.getElementById('book-pkg-none').hidden = false;
+      return;
+    }
     var ul = document.getElementById('book-pkg-lines');
     ul.textContent = '';
     if (!pkg.lines.length) {
@@ -1036,8 +1050,10 @@ footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-betwe
       .then(function () { submitEl.textContent = 'Book my call'; if (!fallbackEl.hidden) return; submitEl.disabled = false; });
   });
 
-  if (location.hash === '#book') openBooking();
-  window.addEventListener('hashchange', function () { if (location.hash === '#book') openBooking(); });
+  // #book opens the pop-up, except on pages that use #book for a section of their own.
+  function hashOpens() { return location.hash === '#book' && !document.getElementById('book'); }
+  if (hashOpens()) openBooking();
+  window.addEventListener('hashchange', function () { if (hashOpens()) openBooking(); });
 })();
 </script>
 </body>

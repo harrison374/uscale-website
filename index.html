@@ -13,7 +13,6 @@
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://assets.calendly.com">
 <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -375,21 +374,6 @@
   .book .lede { margin-top: 24px; }
   .book-cta { margin-top: 36px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
   .book-note { font-family: var(--mono); font-size: 0.8125rem; color: var(--sage); }
-  .calendly-frame {
-    margin-top: 56px;
-    border: 1px solid var(--hair);
-    background: var(--panel);
-    position: relative;
-  }
-  .calendly-frame::before {
-    content: "Loading Harrison’s calendar…";
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--mono);
-    font-size: 0.8125rem;
-    color: var(--sage);
-  }
-  .calendly-inline-widget { min-width: 320px; height: 720px; position: relative; z-index: 1; }
 
   /* ————— Footer ————— */
   footer { border-top: 1px solid var(--hair); padding: 56px 0 40px; }
@@ -583,6 +567,53 @@
     .btn, .case-card, .svc-panel { transition: none; }
   }
 </style>
+<style id="booking-style">
+/* Booking pop-up */
+.bk-modal { --panel-2: #122019; --green-bg: rgba(44, 195, 123, 0.12); --green-ink: #07130C; --error: #F08C77; --error-line: #E36A52; margin: auto; width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--hair-strong); border-radius: 2px; background: var(--panel); color: var(--bone); overflow: auto; }
+.bk-modal::backdrop { background: rgba(4, 8, 6, 0.72); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.book-in { position: relative; padding: 32px; display: grid; gap: 16px; }
+.bk-modal h2 { font-size: 1.9rem; line-height: 1.1; padding-right: 36px; }
+.bk-modal [hidden] { display: none !important; }
+.bk-modal .muted { color: var(--sage); }
+.book-pkg-none { font-size: 0.93rem; color: var(--sage); }
+.book-pkg-none a { color: var(--green); text-underline-offset: 3px; }
+.book-x { position: absolute; top: 14px; right: 14px; width: 44px; height: 44px; display: grid; place-items: center; background: transparent; border: 1px solid var(--hair-strong); border-radius: 2px; color: var(--bone); font-size: 1.4rem; line-height: 1; cursor: pointer; }
+.book-x:hover { border-color: var(--green); color: var(--green); }
+.book-x:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.book-pkg { background: var(--panel-2); border: 1px solid var(--hair); border-radius: 2px; padding: 14px 16px; display: grid; gap: 8px; }
+.book-pkg-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.book-pkg-head span, .book-pkg-total span { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sage); }
+.book-pkg-head a { color: var(--green); font-size: 0.9rem; text-underline-offset: 3px; }
+#book-pkg-lines { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 0.93rem; }
+#book-pkg-lines li { display: flex; justify-content: space-between; gap: 12px; }
+#book-pkg-lines li span:last-child { color: var(--sage); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.book-pkg-total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--hair); padding-top: 8px; }
+.book-pkg-total b { font-family: var(--display); font-weight: 800; font-size: 1.3rem; font-variant-numeric: tabular-nums; }
+#book-form { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label { font-size: 0.9rem; font-weight: 700; }
+.field input, .field select { width: 100%; min-height: 48px; padding: 10px 12px; background: var(--ink); color: var(--bone); border: 1px solid var(--hair-strong); border-radius: 2px; font: inherit; }
+.field select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--sage) 50%), linear-gradient(135deg, var(--sage) 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 34px; }
+.field input:focus, .field select:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px var(--green-bg); }
+.field input[aria-invalid="true"] { border-color: var(--error-line); }
+.field select:disabled { opacity: 0.55; }
+.field-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.book-tz { font-size: 0.85rem; color: var(--sage); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.book-err { font-size: 0.93rem; color: var(--error); }
+.book-submit { width: 100%; cursor: pointer; }
+.book-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+.book-done { display: grid; gap: 10px; justify-items: start; }
+.book-done-title { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; }
+.book-done-title svg { color: var(--green); flex: none; }
+.book-done p { color: var(--sage); }
+.book-fallback { display: grid; gap: 12px; justify-items: start; border-top: 1px solid var(--hair); padding-top: 14px; }
+.book-fallback p { color: var(--sage); }
+@media (max-width: 480px) {
+  .book-in { padding: 24px 20px; }
+  .field-row { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -594,7 +625,7 @@
       <a href="#services">Services</a>
       <a href="#process">Process</a>
       <a href="#results">Case Studies</a>
-      <a class="btn btn-solid" href="https://calendly.com/harrison-uscale/30-minute-discovery-meeting-clone" target="_blank" rel="noopener">Book a Discovery Call</a>
+      <a class="btn btn-solid" href="packages/#book" data-book>Book a Discovery Call</a>
     </div>
   </div>
 </nav>
@@ -618,7 +649,7 @@
         <h1>Scale faster with <em>paid ads</em> and high performing <em>creative</em></h1>
         <p class="lede">We build creative and campaigns that bring in customers at scale.</p>
         <div class="hero-ctas">
-          <a class="btn btn-solid" href="https://calendly.com/harrison-uscale/30-minute-discovery-meeting-clone" target="_blank" rel="noopener">
+          <a class="btn btn-solid" href="packages/#book" data-book>
             Book a Discovery Call
             <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -889,17 +920,12 @@
         <h2>Ready to Scale?</h2>
         <p class="lede">Book a discovery call and let's discuss how we can scale your business with high-performing ads and creative.</p>
         <div class="book-cta">
-          <a class="btn btn-solid" href="https://calendly.com/harrison-uscale/30-minute-discovery-meeting-clone" target="_blank" rel="noopener">
+          <a class="btn btn-solid" href="packages/#book" data-book>
             Book a Discovery Call
             <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
           <span class="book-note">30 min · Google Meet · Free</span>
         </div>
-      </div>
-      <div class="calendly-frame reveal">
-        <div class="calendly-inline-widget"
-             data-url="https://calendly.com/harrison-uscale/30-minute-discovery-meeting-clone?hide_gdpr_banner=1&background_color=0e1613&text_color=edeae0&primary_color=2cc37b"
-             aria-label="Calendly booking widget — book a 30-minute discovery call"></div>
       </div>
     </div>
   </section>
@@ -925,7 +951,7 @@
       <div class="foot-col">
         <h4>Get Started</h4>
         <p>Ready to scale your business with performance marketing?</p>
-        <a class="btn btn-ghost" href="https://calendly.com/harrison-uscale/30-minute-discovery-meeting-clone" target="_blank" rel="noopener">Book a Discovery Call</a>
+        <a class="btn btn-ghost" href="packages/#book" data-book>Book a Discovery Call</a>
       </div>
     </div>
     <div class="foot-bottom">© 2026 Uscale. All rights reserved.</div>
@@ -1074,22 +1100,241 @@
     window.addEventListener('resize', onScroll, { passive: true });
     check();
   })();
-
-  // ————— Calendly: defer the widget script until first scroll, or 2s after load —————
-  (function () {
-    var loaded = false;
-    function load() {
-      if (loaded) return;
-      loaded = true;
-      window.removeEventListener('scroll', load);
-      var s = document.createElement('script');
-      s.src = 'https://assets.calendly.com/assets/external/widget.js';
-      s.async = true;
-      document.body.appendChild(s);
-    }
-    window.addEventListener('scroll', load, { passive: true });
-    window.addEventListener('load', function () { setTimeout(load, 2000); });
-  })();
 </script>
+<!--BOOKING:START-->
+<dialog class="bk-modal" id="booking-dialog" aria-labelledby="book-title">
+  <div class="book-in">
+    <button type="button" class="book-x" id="book-close" aria-label="Close"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <h2 id="book-title">Book a 30-minute discovery call</h2>
+    <p class="muted">On Google Meet. Pick a time and the invite goes straight to your inbox.</p>
+
+    <div class="book-pkg">
+      <div class="book-pkg-head"><span>Your package</span><a href="#builder" id="book-edit">Change it</a></div>
+      <ul id="book-pkg-lines"></ul>
+      <p class="book-pkg-total"><span>Monthly total</span><b id="book-pkg-total">£2,000</b></p>
+      <p class="book-pkg-none" id="book-pkg-none" hidden>No package chosen yet. <a href="/packages/#builder">Build one</a>, or book the call and we'll work it out together.</p>
+    </div>
+
+    <form id="book-form" novalidate>
+      <div class="field">
+        <label for="bk-name">Your name</label>
+        <input id="bk-name" name="name" autocomplete="name" maxlength="100" required>
+      </div>
+      <div class="field">
+        <label for="bk-email">Email</label>
+        <input id="bk-email" name="email" type="email" autocomplete="email" maxlength="254" required>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="bk-date">Date</label>
+          <select id="bk-date" name="date" required disabled><option>Loading times…</option></select>
+        </div>
+        <div class="field">
+          <label for="bk-time">Time</label>
+          <select id="bk-time" name="time" required disabled><option>Choose a date</option></select>
+        </div>
+      </div>
+      <p class="book-tz" id="bk-tz"></p>
+      <div class="hp" aria-hidden="true">
+        <label for="bk-website">Leave this empty</label>
+        <input id="bk-website" name="company_website" tabindex="-1" autocomplete="off">
+      </div>
+      <p class="book-err" id="bk-err" role="alert" hidden></p>
+      <button class="btn btn-solid book-submit" type="submit" id="bk-submit" disabled>Book my call</button>
+    </form>
+
+    <div class="book-done" id="bk-done" hidden>
+      <h3 class="book-done-title"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M4 12.5l5 5L20 6.5"/></svg>You're booked</h3>
+      <p id="bk-done-text"></p>
+      <button type="button" class="btn btn-ghost" id="bk-done-close">Close</button>
+    </div>
+
+    <div class="book-fallback" id="bk-fallback" hidden>
+      <p id="bk-fallback-text">Online booking isn't available right now.</p>
+      <button type="button" class="btn btn-ghost" id="bk-retry">Try again</button>
+    </div>
+  </div>
+</dialog>
+<script>
+(function () {
+  // Paste the Google Apps Script web app URL here after deploying booking-backend/Code.gs.
+  var BOOKING_URL = '__BOOKING_URL__';
+
+  var dialog = document.getElementById('booking-dialog');
+  if (!dialog || typeof dialog.showModal !== 'function') return; // very old browsers: the link opens this page
+
+  var form = document.getElementById('book-form');
+  var nameEl = document.getElementById('bk-name');
+  var emailEl = document.getElementById('bk-email');
+  var dateEl = document.getElementById('bk-date');
+  var timeEl = document.getElementById('bk-time');
+  var tzEl = document.getElementById('bk-tz');
+  var hpEl = document.getElementById('bk-website');
+  var errEl = document.getElementById('bk-err');
+  var submitEl = document.getElementById('bk-submit');
+  var doneEl = document.getElementById('bk-done');
+  var doneText = document.getElementById('bk-done-text');
+  var fallbackEl = document.getElementById('bk-fallback');
+  var fallbackText = document.getElementById('bk-fallback-text');
+
+  var viewerTz = 'Europe/London';
+  try { viewerTz = Intl.DateTimeFormat().resolvedOptions().timeZone || viewerTz; } catch (e) {}
+  var dayKey = new Intl.DateTimeFormat('en-CA', { timeZone: viewerTz, year: 'numeric', month: '2-digit', day: '2-digit' });
+  var dayLabel = new Intl.DateTimeFormat(undefined, { timeZone: viewerTz, weekday: 'short', day: 'numeric', month: 'short' });
+  var timeLabel = new Intl.DateTimeFormat(undefined, { timeZone: viewerTz, hour: 'numeric', minute: '2-digit' });
+  var fullLabel = new Intl.DateTimeFormat(undefined, { timeZone: viewerTz, weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' });
+
+  var byDay = {};
+  var configured = BOOKING_URL && BOOKING_URL.indexOf('__') !== 0;
+
+  function show(el, on) { el.hidden = !on; }
+  function setError(msg) { errEl.textContent = msg || ''; show(errEl, !!msg); }
+
+  function currentPackage() {
+    var lines = [];
+    document.querySelectorAll('#lines li:not(.empty)').forEach(function (li) {
+      var s = li.querySelectorAll('span');
+      if (s.length === 2) lines.push({ name: s[0].textContent, price: s[1].textContent });
+    });
+    var total = (document.getElementById('total') || {}).textContent || '';
+    return { lines: lines, total: total };
+  }
+
+  var hasBuilder = !!document.getElementById('builder-form');
+
+  function renderPackage() {
+    var pkg = currentPackage();
+    if (!hasBuilder) {
+      document.getElementById('book-pkg-lines').hidden = true;
+      document.querySelector('.book-pkg-total').hidden = true;
+      document.getElementById('book-edit').hidden = true;
+      document.getElementById('book-pkg-none').hidden = false;
+      return;
+    }
+    var ul = document.getElementById('book-pkg-lines');
+    ul.textContent = '';
+    if (!pkg.lines.length) {
+      var empty = document.createElement('li'); empty.textContent = 'Nothing selected yet'; ul.appendChild(empty);
+    }
+    pkg.lines.forEach(function (l) {
+      var li = document.createElement('li');
+      var a = document.createElement('span'); a.textContent = l.name;
+      var b = document.createElement('span'); b.textContent = l.price;
+      li.appendChild(a); li.appendChild(b); ul.appendChild(li);
+    });
+    document.getElementById('book-pkg-total').textContent = pkg.total + ' / mo + VAT';
+  }
+
+  function fallback(msg) {
+    fallbackText.textContent = msg;
+    show(fallbackEl, true);
+    dateEl.innerHTML = '<option>Not available</option>';
+    timeEl.innerHTML = '<option>Not available</option>';
+    dateEl.disabled = true; timeEl.disabled = true; submitEl.disabled = true;
+  }
+
+  function fillTimes() {
+    var slots = byDay[dateEl.value] || [];
+    timeEl.textContent = '';
+    slots.forEach(function (iso) {
+      var o = document.createElement('option'); o.value = iso; o.textContent = timeLabel.format(new Date(iso)); timeEl.appendChild(o);
+    });
+    timeEl.disabled = !slots.length;
+  }
+
+  function loadSlots() {
+    show(fallbackEl, false);
+    dateEl.disabled = true; timeEl.disabled = true; submitEl.disabled = true;
+    dateEl.innerHTML = '<option>Loading times…</option>';
+    timeEl.innerHTML = '<option>Choose a date</option>';
+    tzEl.textContent = 'Times are shown in your time zone (' + viewerTz.replace(/_/g, ' ') + ').';
+    if (!configured) { fallback("Online booking opens very soon. Please check back shortly."); return; }
+    fetch(BOOKING_URL + '?action=slots', { method: 'GET' })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data || !data.ok) throw new Error('bad_response');
+        byDay = {};
+        (data.slots || []).forEach(function (iso) {
+          var k = dayKey.format(new Date(iso));
+          (byDay[k] = byDay[k] || []).push(iso);
+        });
+        var days = Object.keys(byDay).sort();
+        if (!days.length) { fallback('There are no free times in the next two weeks.'); return; }
+        dateEl.textContent = '';
+        days.forEach(function (k) {
+          var o = document.createElement('option'); o.value = k; o.textContent = dayLabel.format(new Date(byDay[k][0])); dateEl.appendChild(o);
+        });
+        dateEl.disabled = false; submitEl.disabled = false;
+        fillTimes();
+      })
+      .catch(function () { fallback("We couldn't load the available times."); });
+  }
+
+  function openBooking() {
+    renderPackage();
+    setError('');
+    show(form, true); show(doneEl, false);
+    if (!dialog.open) dialog.showModal();
+    loadSlots();
+    setTimeout(function () { nameEl.focus(); }, 30);
+  }
+
+  document.querySelectorAll('[data-book]').forEach(function (a) {
+    a.addEventListener('click', function (ev) { ev.preventDefault(); openBooking(); });
+  });
+  document.getElementById('book-close').addEventListener('click', function () { dialog.close(); });
+  document.getElementById('bk-done-close').addEventListener('click', function () { dialog.close(); });
+  document.getElementById('book-edit').addEventListener('click', function () { dialog.close(); });
+  dialog.addEventListener('click', function (ev) { if (ev.target === dialog) dialog.close(); });
+  dateEl.addEventListener('change', fillTimes);
+  document.getElementById('bk-retry').addEventListener('click', function () { setError(''); loadSlots(); });
+
+  form.addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    setError('');
+    nameEl.removeAttribute('aria-invalid'); emailEl.removeAttribute('aria-invalid');
+    var name = nameEl.value.trim();
+    var email = emailEl.value.trim();
+    if (!name) { nameEl.setAttribute('aria-invalid', 'true'); setError('Please enter your name.'); nameEl.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { emailEl.setAttribute('aria-invalid', 'true'); setError('Please enter a valid email address.'); emailEl.focus(); return; }
+    if (!timeEl.value) { setError('Please choose a date and time.'); return; }
+
+    var pkg = currentPackage();
+    var start = timeEl.value;
+    submitEl.disabled = true; submitEl.textContent = 'Booking…';
+    fetch(BOOKING_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        name: name, email: email, start: start, timeZone: viewerTz,
+        package: pkg.lines.map(function (l) { return l.name + ': ' + l.price; }),
+        total: pkg.total, company_website: hpEl.value,
+      }),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res && res.ok) {
+          doneText.textContent = 'Your call is on ' + fullLabel.format(new Date(start)) + '. A Google Calendar invite with the Meet link is on its way to ' + email + '.';
+          show(form, false); show(doneEl, true);
+          return;
+        }
+        var code = (res && res.error) || 'booking_failed';
+        if (code === 'slot_unavailable') { setError('That time has just been taken. Please pick another.'); loadSlots(); return; }
+        if (code === 'rate_limited') { setError("You've already booked a call. Check your inbox for the invite."); return; }
+        if (code === 'email_invalid') { emailEl.setAttribute('aria-invalid', 'true'); setError('Please enter a valid email address.'); return; }
+        if (code === 'name_required') { setError('Please enter your name.'); return; }
+        setError("We couldn't book that call."); fallback('Please try again in a moment.');
+      })
+      .catch(function () { setError("We couldn't reach the booking system."); fallback('Please try again in a moment.'); })
+      .then(function () { submitEl.textContent = 'Book my call'; if (!fallbackEl.hidden) return; submitEl.disabled = false; });
+  });
+
+  // #book opens the pop-up, except on pages that use #book for a section of their own.
+  function hashOpens() { return location.hash === '#book' && !document.getElementById('book'); }
+  if (hashOpens()) openBooking();
+  window.addEventListener('hashchange', function () { if (hashOpens()) openBooking(); });
+})();
+</script>
+<!--BOOKING:END-->
 </body>
 </html>
