@@ -112,12 +112,6 @@ section.block { padding-block: 88px 8px; scroll-margin-top: 72px; }
 .work { margin-top: 56px; display: grid; gap: 20px; }
 .work-head h3 { font-size: clamp(1.6rem, 2.8vw, 2.1rem); margin: 0 0 8px; }
 .work-head p:not(.eyebrow) { color: var(--sage); max-width: 62ch; }
-.chips-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip-btn { font: inherit; font-size: 0.88rem; min-height: 44px; padding: 8px 14px; background: transparent; color: var(--sage); border: 1px solid var(--hair-strong); border-radius: 2px; cursor: pointer; transition: border-color 160ms ease-out, color 160ms ease-out, background-color 160ms ease-out; }
-.chip-btn span { font-family: var(--mono); font-size: 0.75rem; margin-left: 4px; opacity: 0.8; }
-.chip-btn:hover { color: var(--bone); border-color: var(--sage); }
-.chip-btn[aria-pressed="true"] { color: var(--green-ink); background: var(--green); border-color: var(--green); }
-.chip-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
 .gallery { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border: 1px solid var(--hair); }
 .gallery figure { position: relative; margin: 0; aspect-ratio: 1 / 1; overflow: hidden; background: var(--panel-2); outline: none; }
 .gallery img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -241,9 +235,6 @@ footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-betwe
 }
 @media (max-width: 680px) {
   .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .chips-row { flex-wrap: nowrap; overflow-x: auto; margin-inline: -20px; padding: 0 20px 6px; scrollbar-width: none; }
-  .chips-row::-webkit-scrollbar { display: none; }
-  .chip-btn { flex: none; }
   .core-groups { grid-template-columns: minmax(0, 1fr); padding: 24px; }
   .core-price { padding: 24px; }
   .faq, .small-print, .omni { grid-template-columns: minmax(0, 1fr); }
@@ -262,7 +253,7 @@ footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-betwe
   .flows td.split:empty { display: none; }
 }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-@media (prefers-reduced-motion: reduce) { .btn, .opt-box, .chip-btn, .gallery figcaption { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .btn, .opt-box, .gallery figcaption { transition: none; } }
 
 /* Booking pop-up */
 .bk-modal { --panel-2: #122019; --green-bg: rgba(44, 195, 123, 0.12); --green-ink: #07130C; --error: #F08C77; --error-line: #E36A52; margin: auto; width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--hair-strong); border-radius: 2px; background: var(--panel); color: var(--bone); overflow: auto; }
@@ -405,40 +396,26 @@ footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-betwe
       <div class="work-head">
         <div>
           <h3>Creative examples</h3>
-          <p>Recent static ads we've made for ecommerce brands. Filter by format, and hover or tap an ad to see its format.</p>
+          <p>Recent static ads we've made for ecommerce brands. Hover or tap an ad to see its format.</p>
         </div>
       </div>
-      <div class="chips-row" role="group" aria-label="Filter by format">
-        <button type="button" class="chip-btn" data-filter="all" aria-pressed="true">All <span>16</span></button>
-        <button type="button" class="chip-btn" data-filter="Testimonial" aria-pressed="false">Testimonial <span>3</span></button>
-        <button type="button" class="chip-btn" data-filter="Feature-Benefit" aria-pressed="false">Feature-Benefit <span>3</span></button>
-        <button type="button" class="chip-btn" data-filter="Headline" aria-pressed="false">Headline <span>2</span></button>
-        <button type="button" class="chip-btn" data-filter="Before &amp; After" aria-pressed="false">Before &amp; After <span>1</span></button>
-        <button type="button" class="chip-btn" data-filter="Statistic" aria-pressed="false">Statistic <span>1</span></button>
-        <button type="button" class="chip-btn" data-filter="Offer" aria-pressed="false">Offer <span>1</span></button>
-        <button type="button" class="chip-btn" data-filter="Us vs Them" aria-pressed="false">Us vs Them <span>1</span></button>
-        <button type="button" class="chip-btn" data-filter="Backhanded Review" aria-pressed="false">Backhanded Review <span>1</span></button>
-        <button type="button" class="chip-btn" data-filter="Grid Style" aria-pressed="false">Grid Style <span>1</span></button>
-        <button type="button" class="chip-btn" data-filter="Ingredients Annotation" aria-pressed="false">Ingredients Annotation <span>1</span></button>
-        <button type="button" class="chip-btn" data-filter="Crossed-Out Problems" aria-pressed="false">Crossed-Out Problems <span>1</span></button>
-      </div>
       <div class="gallery" id="gallery">
-        <figure tabindex="0" data-format="Before &amp; After"><img src="creative/c01.jpg" alt="Before &amp; After ad for a men&#x27;s skincare brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Before &amp; After</span><span>Men&#x27;s skincare</span></figcaption></figure>
-        <figure tabindex="0" data-format="Statistic"><img src="creative/c02.jpg" alt="Statistic ad for a sleep eyewear brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Statistic</span><span>Sleep eyewear</span></figcaption></figure>
-        <figure tabindex="0" data-format="Offer"><img src="creative/c03.jpg" alt="Offer ad for a sexual wellness brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Offer</span><span>Sexual wellness</span></figcaption></figure>
-        <figure tabindex="0" data-format="Us vs Them"><img src="creative/c04.jpg" alt="Us vs Them ad for a hair care brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Us vs Them</span><span>Hair care</span></figcaption></figure>
-        <figure tabindex="0" data-format="Headline"><img src="creative/c05.jpg" alt="Headline ad for a fashion accessories brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Headline</span><span>Fashion accessories</span></figcaption></figure>
-        <figure tabindex="0" data-format="Testimonial"><img src="creative/c06.jpg" alt="Testimonial ad for a menswear brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Testimonial</span><span>Menswear</span></figcaption></figure>
-        <figure tabindex="0" data-format="Backhanded Review"><img src="creative/c07.jpg" alt="Backhanded Review ad for a sleep eyewear brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Backhanded Review</span><span>Sleep eyewear</span></figcaption></figure>
-        <figure tabindex="0" data-format="Grid Style"><img src="creative/c08.jpg" alt="Grid Style ad for a hair supplement brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Grid Style</span><span>Hair supplement</span></figcaption></figure>
-        <figure tabindex="0" data-format="Ingredients Annotation"><img src="creative/c09.jpg" alt="Ingredients Annotation ad for a nutrition brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Ingredients Annotation</span><span>Nutrition</span></figcaption></figure>
-        <figure tabindex="0" data-format="Testimonial"><img src="creative/c10.jpg" alt="Testimonial ad for a menopause supplement brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Testimonial</span><span>Menopause supplement</span></figcaption></figure>
-        <figure tabindex="0" data-format="Feature-Benefit"><img src="creative/c11.jpg" alt="Feature-Benefit ad for a beard growth brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Feature-Benefit</span><span>Beard growth</span></figcaption></figure>
-        <figure tabindex="0" data-format="Crossed-Out Problems"><img src="creative/c12.jpg" alt="Crossed-Out Problems ad for a sleep eyewear brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Crossed-Out Problems</span><span>Sleep eyewear</span></figcaption></figure>
-        <figure tabindex="0" data-format="Feature-Benefit"><img src="creative/c13.jpg" alt="Feature-Benefit ad for a women&#x27;s supplement brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Feature-Benefit</span><span>Women&#x27;s supplement</span></figcaption></figure>
-        <figure tabindex="0" data-format="Testimonial"><img src="creative/c14.jpg" alt="Testimonial ad for a men&#x27;s supplement brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Testimonial</span><span>Men&#x27;s supplement</span></figcaption></figure>
-        <figure tabindex="0" data-format="Feature-Benefit"><img src="creative/c15.jpg" alt="Feature-Benefit ad for a menswear brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Feature-Benefit</span><span>Menswear</span></figcaption></figure>
-        <figure tabindex="0" data-format="Headline"><img src="creative/c16.jpg" alt="Headline ad for a wine club brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Headline</span><span>Wine club</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c01.jpg" alt="Before &amp; After ad for a men&#x27;s skincare brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Before &amp; After</span><span>Men&#x27;s skincare</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c02.jpg" alt="Statistic ad for a sleep eyewear brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Statistic</span><span>Sleep eyewear</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c03.jpg" alt="Offer ad for a sexual wellness brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Offer</span><span>Sexual wellness</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c04.jpg" alt="Us vs Them ad for a hair care brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Us vs Them</span><span>Hair care</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c05.jpg" alt="Headline ad for a fashion accessories brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Headline</span><span>Fashion accessories</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c06.jpg" alt="Testimonial ad for a menswear brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Testimonial</span><span>Menswear</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c07.jpg" alt="Backhanded Review ad for a sleep eyewear brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Backhanded Review</span><span>Sleep eyewear</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c08.jpg" alt="Grid Style ad for a hair supplement brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Grid Style</span><span>Hair supplement</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c09.jpg" alt="Ingredients Annotation ad for a nutrition brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Ingredients Annotation</span><span>Nutrition</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c10.jpg" alt="Testimonial ad for a menopause supplement brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Testimonial</span><span>Menopause supplement</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c11.jpg" alt="Feature-Benefit ad for a beard growth brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Feature-Benefit</span><span>Beard growth</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c12.jpg" alt="Crossed-Out Problems ad for a sleep eyewear brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Crossed-Out Problems</span><span>Sleep eyewear</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c13.jpg" alt="Feature-Benefit ad for a women&#x27;s supplement brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Feature-Benefit</span><span>Women&#x27;s supplement</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c14.jpg" alt="Testimonial ad for a men&#x27;s supplement brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Testimonial</span><span>Men&#x27;s supplement</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c15.jpg" alt="Feature-Benefit ad for a menswear brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Feature-Benefit</span><span>Menswear</span></figcaption></figure>
+        <figure tabindex="0"><img src="creative/c16.jpg" alt="Headline ad for a wine club brand" width="640" height="640" loading="lazy" decoding="async"><figcaption><span class="fmt">Headline</span><span>Wine club</span></figcaption></figure>
       </div>
     </div>
   </section>
@@ -813,21 +790,6 @@ footer.foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-betwe
   }
   form.addEventListener('change', render);
   render();
-})();
-</script>
-<script>
-(function () {
-  var gallery = document.getElementById('gallery');
-  if (!gallery) return;
-  var figs = Array.prototype.slice.call(gallery.querySelectorAll('figure'));
-  var chips = Array.prototype.slice.call(document.querySelectorAll('.chip-btn'));
-  chips.forEach(function (c) {
-    c.addEventListener('click', function () {
-      var f = c.dataset.filter;
-      chips.forEach(function (x) { x.setAttribute('aria-pressed', String(x === c)); });
-      figs.forEach(function (fig) { fig.hidden = f !== 'all' && fig.dataset.format !== f; });
-    });
-  });
 })();
 </script>
 <script>
